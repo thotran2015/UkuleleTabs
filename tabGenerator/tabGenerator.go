@@ -2,6 +2,7 @@ package tabGenerator
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -21,20 +22,20 @@ var chords = map[string]Chord{
 	"G7": {"G7", map[rune]int{'A': 2, 'E': 1, 'C': 2}},
 }
 
-func createEmptyTab() map[rune][]rune {
-	tabMap := make(map[rune][]rune)
+func CreateEmptyTab() map[rune][]string {
+	tabMap := make(map[rune][]string)
 	for _, str := range stringLabels {
-		var frets []rune
+		var frets []string
 		for i := 0; i < fretMax; i++ {
-			frets = append(frets, '-')
+			frets = append(frets, "-")
 		}
 		tabMap[str] = frets
 	}
 	return tabMap
 }
 
-func createTab(chordName string) string {
-	tab := createEmptyTab()
+func CreateTab(chordName string) string {
+	tab := CreateEmptyTab()
 	chord, exists := chords[chordName]
 	if !exists {
 		return fmt.Sprintf("chord %s is not supported right now", chordName)
@@ -43,9 +44,9 @@ func createTab(chordName string) string {
 	var strTab []string
 	for _, str := range stringLabels {
 		if fingerPos, exists := chord.FingerPos[str]; exists {
-			tab[str][fingerPos-1] = 'O'
+			tab[str][0] = strconv.Itoa(fingerPos)
 		}
-		strRes := fmt.Sprintf("%c |%s|", str, string(tab[str]))
+		strRes := fmt.Sprintf("%c |%s|", str, strings.Join(tab[str], ""))
 		strTab = append(strTab, strRes)
 	}
 	return strings.Join(strTab, "\n")
